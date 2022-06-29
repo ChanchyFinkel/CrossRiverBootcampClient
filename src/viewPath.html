@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="../bootstrap/jquery-3.6.0.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <article class="container">
+        <br>
+        <br>
+        <h1>Report your Path </h1>
+        <br>
+        <input class="input" type="text" placeholder="Enter Id" required id="id">
+        <br>
+        <table class="table table-bordered table-striped table-hover">
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>city</th>
+            <th>location</th>
+            <th></th>
+        </table>
+        <br>
+        <input class="input" type="datetime-local" placeholder="Enter Start Date" id="startDate">
+        <input class="input" type="datetime-local" placeholder="Enter End Date" id="endDate">
+        <input class="input" type="text" placeholder="Enter City" id="city">
+        <input class="input" type="text" placeholder="Enter Location" id="location">
+        <button id="add" type="submit" class="btn btn-primary">Add Location</button>
+        <button id="view" type="button" class="btn btn-primary">To view your Path</button>
+        <script type="module" src="./viewPath.js"></script>
+    </article>
+</body>
+
+</html>
