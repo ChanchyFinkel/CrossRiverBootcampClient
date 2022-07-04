@@ -9,6 +9,7 @@ window.onpageshow = onPageLoad();
 
 
 function onPageLoad() {
+   //קראית פצ לקבלת כל הדוחות
     //adding an event to the search input
     var input = document.getElementById('search');
     input.addEventListener("focusout", search);
@@ -22,15 +23,16 @@ function search() {
     let searchReports = [];
     var input = document.getElementById('search');
     var searchData = input.value.toLowerCase();
-    //  input.addEventListener('click', () => {
+    // שנכנס לסיריצ' דאטא - קריאת פצ עם קווארי פארם לפי הסיטי
+   // //  input.addEventListener('click', () => {
 
-    allReports.forEach(patient => {
-        patient.reports.filter(report => {
-            if (report.city.toLowerCase().includes(searchData)) {
-                searchReports.push(report);
-            }
-        })
-    });
+    // allReports.forEach(patient => {
+    //     patient.reports.filter(report => {
+    //         if (report.city.toLowerCase().includes(searchData)) {
+    //             searchReports.push(report);
+    //         }
+    //     })
+    // });
     cleanTable();
     uploadData(searchReports);
 }
@@ -78,8 +80,7 @@ function uploadData(allReports) {
     else {
         //alert('Ther is no location')
     }
-};
-// || student.lName.toLowerCase().includes(searchData)
+}
 function sortByDate() {
     let reportsToSort = []
     allReports.forEach(patient => {
