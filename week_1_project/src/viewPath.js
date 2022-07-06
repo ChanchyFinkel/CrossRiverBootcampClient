@@ -8,40 +8,83 @@ import { Patient } from './patient.js';
 var allPatients = [];
 window.onpageshow = createTableReport();
 async function createTableReport() {
+
     //create a table for each patient with his reports - according his id
     var id = document.getElementById('id');
+    var patient;
+ 
     //add event to the id input that clean the old data
     //and drow the data that bloungth the current patient
-
-
-
     id.addEventListener('change', () => {
         cleanTable();
         if (id.value) {
-            //         //finding the current patient
-
-            //קריאת פצ וקבלת כל הדוחות של הלקוח לפי האינפוט אי די
-
-            //  //       var patient = allPatients.find(patient => patient.id == id.value);
-            //   //      the patient has old reports
-            if (patient)
-                //drawing the old reports
-                patient.reports.forEach(report => {
-                    uploadData(report);
-                })
-
-
-            //         //adding an event to the add button
+            fetch(`https://localhost:44374/api/Patient/${id.value}/location`, {
+               method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    patient = data;
+                    allPatients = data;
+                }).then(patient => {
+                    if (patient)
+                        //drawing the old reports
+                        patient.reports.forEach(report => {
+                            uploadData(report);
+                        })
+                });
+            //adding an event to the add button
             var btn = document.getElementById("add");
             btn.addEventListener("click", addReport);
+
         }
     })
-
-
     // adding an event to the view button
     var btn = document.getElementById("view");
     btn.addEventListener("click", viewLocations);
 }
+// function readDb() {
+
+//     fs.readFileSync('./db.json', 'utf-8', (err, data) => {
+//         if (err) {
+//             throw err;
+//         }
+//         // parse JSON object
+//         allPatients = JSON.parse(data.toString());
+//     });
+// }
+// function writeToDB(patient, report) {
+//     try {
+//         fs.readFile('./db.json', 'utf8', (err, data) => {
+
+//             if (err) {
+//                 console.log(`Error reading file from disk: ${err}`);
+//             } else {
+
+//                 // parse JSON string to JSON object
+//                 const databases = JSON.parse(data);
+//                 if (!report) {
+//                     databases.push(patient);
+//                 }
+//                 else {
+//                     databases[patient].reports.push(report);
+//                 }
+//                 // write new data back to the file
+//                 fs.writeFile('./db.json', JSON.stringify(databases, null, 4), (err) => {
+//                     if (err) {
+//                         console.log(`Error writing file: ${err}`);
+//                     }
+//                 });
+//             }
+
+//         });
+//     }
+//     catch (error) {
+//         console.error(err);
+//     }
+
+// }
 function cleanTable() {
     //finding the table
     var table = document.querySelector('table');
@@ -56,7 +99,6 @@ function cleanTable() {
 }
 
 function addReport() {
-
     // the patient want to add new report
     //creating a new report
     var currPatient = createReport();
@@ -83,35 +125,39 @@ function createReport() {
         document.getElementById("btn").display = true;
         return null;
     }
-
     else {
-
         //creting the report
         var newReport = new Report(startDate, endDate, city, location);
-        var newPatient = new Patient(id,newReport);
-
-        //קריאת פצ והוספת דוח
-
-        //finding whiche patient enter
-            // var patient = allPatients.find(patient => {
-            //     if (patient.id == id)
-            //         return patient;
-            // });
-        //     if (patient) {
-        //         //a old patient entered
-        //         //adding the report to the reports list
-        //         patient.reports.push(newReport);
+        var newPatient = new Patient(id, newReport);
+        fetch(`https://localhost:44374/api/Patient/location`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newPatient)
+        }).then(response => response.json()) 
+        .then(data => newPatient = data) 
+        return newPatient;      // //finding whiche patient enter
+        // var patient = allPatients.find(patient => {
+        //     if (patient.id == id)
         //         return patient;
-        //     }
-
-        //     else {
-        //         // a new patient entered
-        //         //creating a new patient and
-        //         //adding the report to the reports list
-        //         var newPatient = new Patient(id, newReport);
-        //         allPatients.push(newPatient);
-        //         return newPatient;
-        //     }
+        // });
+        // if (patient) {
+        //     //a old patient entered
+        //     //adding the report to the reports list
+        //     patient.reports.push(newReport);
+        //     // writeToDB(patient, newReport);
+        //     return patient;
+        // }
+        // else {
+        //     // a new patient entered
+        //     //creating a new patient and
+        //     //adding the report to the reports list
+        //     var newPatient = new Patient(id, newReport);
+        //     allPatients.push(newPatient);
+        //     // writeToDB(newPatient);
+        //     return newPatient;
+        // }
     }
 }
 

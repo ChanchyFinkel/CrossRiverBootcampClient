@@ -1,5 +1,5 @@
 export class Report {
-    constructor(startDate,endDate,location,city){
+      constructor(startDate,endDate,location,city){
         this.startDate = startDate;
         this.endDate = endDate;
         this.location = location;

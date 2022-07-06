@@ -1,15 +1,24 @@
 // const JSONData={"id":"1","reports":[{"startDate":"2022-10-01","endDate":"2022-10-02","city":"jerusalem","location":"hotel"},
 // {"startDate":"2022-10-01","endDate":"2022-10-02","city":"jerusalem","location":"Mamilla hotel"}]};
 
-var allReports = [{ "id": "1", "reports": [{ "startDate": "2022-10-01", "endDate": "2022-10-02", "city": "jerusalem", "location": "hotel" }, { "startDate": "2023-10-01", "endDate": "2023-10-02", "city": "TLV", "location": "hotel" }] }
-    , { "id": "2", "reports": [{ "startDate": "2021-10-01", "endDate": "2021-10-02", "city": "jerusalem", "location": "hotel1" }, { "startDate": "2024-10-01", "endDate": "2023-10-02", "city": "TLV", "location": "hotel" }] }]
+// var allReports = [{ "id": "1", "reports": [{ "startDate": "2022-10-01", "endDate": "2022-10-02", "city": "jerusalem", "location": "hotel" }, { "startDate": "2023-10-01", "endDate": "2023-10-02", "city": "TLV", "location": "hotel" }] }
+//     , { "id": "2", "reports": [{ "startDate": "2021-10-01", "endDate": "2021-10-02", "city": "jerusalem", "location": "hotel1" }, { "startDate": "2024-10-01", "endDate": "2023-10-02", "city": "TLV", "location": "hotel" }] }]
 
+var allReports = [];
 window.onpageshow = onPageLoad();
 
 
 
 function onPageLoad() {
-   //קראית פצ לקבלת כל הדוחות
+    fetch(`https://localhost:44374/api/Patient/location`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(response => response.json())
+        .then(data => {
+            allReports = data;
+        }).then(() => allReports.forEach(patient => uploadData(patient.reports)));
     //adding an event to the search input
     var input = document.getElementById('search');
     input.addEventListener("focusout", search);
@@ -20,11 +29,26 @@ function onPageLoad() {
 
 }
 function search() {
-    let searchReports = [];
+    var searchReports = [];
     var input = document.getElementById('search');
-    var searchData = input.value.toLowerCase();
-    // שנכנס לסיריצ' דאטא - קריאת פצ עם קווארי פארם לפי הסיטי
-   // //  input.addEventListener('click', () => {
+    var city = input.value.toLowerCase();
+    fetch(`https://localhost:44374/api/Patient/location?city=${city}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(response => response.json())
+        .then(data => {
+            searchReports = data;
+        })
+        .then(() => {
+            cleanTable();
+            uploadData(searchReports);
+        })
+    // let searchReports = get / location ? city;
+    // var input = document.getElementById('search');
+    // var searchData = input.value.toLowerCase();
+    // //  input.addEventListener('click', () => {
 
     // allReports.forEach(patient => {
     //     patient.reports.filter(report => {
@@ -33,8 +57,6 @@ function search() {
     //         }
     //     })
     // });
-    cleanTable();
-    uploadData(searchReports);
 }
 
 function cleanTable() {
@@ -80,7 +102,8 @@ function uploadData(allReports) {
     else {
         //alert('Ther is no location')
     }
-}
+};
+// || student.lName.toLowerCase().includes(searchData)
 function sortByDate() {
     let reportsToSort = []
     allReports.forEach(patient => {
