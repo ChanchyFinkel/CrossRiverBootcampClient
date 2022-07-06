@@ -11,28 +11,22 @@ async function createTableReport() {
 
     //create a table for each patient with his reports - according his id
     var id = document.getElementById('id');
-    var patient;
- 
     //add event to the id input that clean the old data
     //and drow the data that bloungth the current patient
     id.addEventListener('change', () => {
         cleanTable();
         if (id.value) {
             fetch(`https://localhost:44374/api/Patient/${id.value}/location`, {
-               method: 'GET',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 }
             }).then(response => response.json())
                 .then(data => {
-                    patient = data;
-                    allPatients = data;
-                }).then(patient => {
-                    if (patient)
-                        //drawing the old reports
-                        patient.reports.forEach(report => {
-                            uploadData(report);
-                        })
+                    allPatients.push(data);
+                    data.reports.forEach(report => {
+                        uploadData(report);
+                    })
                 });
             //adding an event to the add button
             var btn = document.getElementById("add");
@@ -44,47 +38,6 @@ async function createTableReport() {
     var btn = document.getElementById("view");
     btn.addEventListener("click", viewLocations);
 }
-// function readDb() {
-
-//     fs.readFileSync('./db.json', 'utf-8', (err, data) => {
-//         if (err) {
-//             throw err;
-//         }
-//         // parse JSON object
-//         allPatients = JSON.parse(data.toString());
-//     });
-// }
-// function writeToDB(patient, report) {
-//     try {
-//         fs.readFile('./db.json', 'utf8', (err, data) => {
-
-//             if (err) {
-//                 console.log(`Error reading file from disk: ${err}`);
-//             } else {
-
-//                 // parse JSON string to JSON object
-//                 const databases = JSON.parse(data);
-//                 if (!report) {
-//                     databases.push(patient);
-//                 }
-//                 else {
-//                     databases[patient].reports.push(report);
-//                 }
-//                 // write new data back to the file
-//                 fs.writeFile('./db.json', JSON.stringify(databases, null, 4), (err) => {
-//                     if (err) {
-//                         console.log(`Error writing file: ${err}`);
-//                     }
-//                 });
-//             }
-
-//         });
-//     }
-//     catch (error) {
-//         console.error(err);
-//     }
-
-// }
 function cleanTable() {
     //finding the table
     var table = document.querySelector('table');
@@ -135,29 +88,11 @@ function createReport() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(newPatient)
-        }).then(response => response.json()) 
-        .then(data => newPatient = data) 
+        }).then(response =>
+            response.json())
+            .then(data =>
+                newPatient = data)
         return newPatient;      // //finding whiche patient enter
-        // var patient = allPatients.find(patient => {
-        //     if (patient.id == id)
-        //         return patient;
-        // });
-        // if (patient) {
-        //     //a old patient entered
-        //     //adding the report to the reports list
-        //     patient.reports.push(newReport);
-        //     // writeToDB(patient, newReport);
-        //     return patient;
-        // }
-        // else {
-        //     // a new patient entered
-        //     //creating a new patient and
-        //     //adding the report to the reports list
-        //     var newPatient = new Patient(id, newReport);
-        //     allPatients.push(newPatient);
-        //     // writeToDB(newPatient);
-        //     return newPatient;
-        // }
     }
 }
 
@@ -199,7 +134,6 @@ function uploadData(report) {
         table.removeChild(ele.target.parentNode.parentNode);
         // delete the selected row from the DB
         deleteReport(report)
-
     });
     //adding the new row to the table
     table.appendChild(row);
@@ -208,20 +142,19 @@ function uploadData(report) {
 function deleteReport(report) {
     //finding the id of the patient
     var id = document.getElementById('id').value;
-    var patientIndex = allPatients.findIndex(ele => ele.id == id);
-    if (patientIndex != -1) {
-        var reportIndex = allPatients[patientIndex].reports.findIndex(ele => {
-            ele.startDate == report.startDate &&
-                ele.endDate == report.endDate &&
-                ele.city == report.city &&
-                ele.location == report.location
-            return ele;
+    var newPatient = new Patient(id, report);
+    fetch(`https://localhost:44374/api/Patient/location`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPatient)
+    }).then(response =>
+        response.json())
+        .then(data => {
+            if(data == -1)
+            alert("Not Valid Action")
         })
-    }
-    if (reportIndex != -1) {
-        allPatients[patientIndex].reports.splice(reportIndex, 1);
-        console.log(allPatients);
-    }
 }
 function viewLocations() {
     window.location.href = "./epidemiologyReport.html"

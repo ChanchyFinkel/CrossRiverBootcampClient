@@ -1,10 +1,9 @@
-let strings = ["E","F","G","H"];
-var er =true;
+let array = ["E", "F", "G", "H"];
 
 let promise = new Promise(function (resolve, reject) {
     setTimeout(() => {
         resolve(`the rand anser is ${Math.floor(Math.random() * 10)}`),
-        reject(new Error("not valid")), 3000
+            reject(new Error("not valid")), 3000
     })
 });
 promise.then(
@@ -14,35 +13,19 @@ promise.then(
 
 
 let promise2 = new Promise(function (resolve, reject) {
-    let lowerStrings = toLower(strings);
-    if (lowerStrings!=false) {
-        resolve(lowerStrings);
-    } else {
-        reject("invalid array");
-    }
-})
-promise2.then(
-    function (resolve) {
-        resolve = resolve.sort();
-        alert((resolve.toString()))
-    }
-    ,
-    function (reject) {
-        alert(reject)
-    }
-)
-
-function toLower(array) {
     array.forEach((ele, i) => {
-        if (typeof (ele) == typeof ("")) {
-            array[i] = array[i].toLowerCase();
-        }
-        else {
-           er = false;
+        if (typeof (ele) != typeof ("")) {
+            reject(new Error("Invalid element"));
         }
     });
-     if (er)
-        return array;
-     else
-       return er;
-}
+    array.forEach((ele, i) => {
+        array[i] = array[i].toLowerCase();
+    });
+    resolve(array)
+})
+promise2.then(
+    resolve => {
+        resolve=resolve.sort();
+        alert(resolve)},
+    reject => alert(reject)
+);
